@@ -32,7 +32,7 @@
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100">
-				<form action="/signUpUser" method="post" class="login100-form validate-form">
+				<form action="/signUpUser" method="post" modelAttribute="userForm" class="login100-form validate-form">
 					<span class="login100-form-title p-b-26">
 						Sign up
 					</span>
@@ -41,8 +41,9 @@
 					</span>
 
 					<div class="wrap-input100">
-						<input class="input100" type="text" name="naam">
-						<span class="focus-input100" data-placeholder="Naam"></span>
+						<input class="input100" type="text" name="username">
+						<span class="focus-input100" data-placeholder="Gebruikersnaam"></span>
+						<form:errors path="username"></form:errors>
 					</div>
 
 					<div class="wrap-input100 validate-input" data-validate = "Valid email is: a@b.c">
@@ -53,11 +54,13 @@
                     <div class="wrap-input100">
                         <input class="input100" type="password" name="password">
                         <span class="focus-input100" data-placeholder="Wachtwoord"></span>
+                        <form:errors path="password"></form:errors>
                     </div>
 
                     <div class="wrap-input100 validatePassword-input">
                         <input class="input100" type="password" name="validatepassword">
                         <span class="focus-input100" data-placeholder="Valideer Wachtwoord"></span>
+                        form:errors path="passwordConfirm"></form:errors>
                     </div>
 
 					<div class="container-login100-form-btn">

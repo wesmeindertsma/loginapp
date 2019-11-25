@@ -1,43 +1,64 @@
 package com.example.hibernateLogin.controllers;
 
 import com.example.hibernateLogin.models.User;
-import com.example.hibernateLogin.repositories.UserRepositories;
+import com.example.hibernateLogin.services.SecurityService;
+import com.example.hibernateLogin.services.UserService;
+import com.example.hibernateLogin.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class UserController {
 
     @Autowired
-    UserRepositories userRepository;
+    private UserService userService;
 
-    @PostMapping("/signUpUser")
-    String signUpUser (User user, Model model) {
-        model.addAttribute(user);
-        userRepository.save(user);
-        return "success";
-    }
+    @Autowired
+    private SecurityService securityService;
 
-    @PostMapping("/login")
-    String loginUser(User user, Model model){
-        model.addAttribute(user);
-        if (user.getEmail().equals("piet@gmail.com") && user.getPassword().equals("geheim")) {
-            return "success";
-        } else {
-            return "nosuccess";
-        }
-    }
-
-    @GetMapping("/index")
-    String jumpToForm() {
-        return "index";
-    }
+    @Autowired
+    private UserValidator userValidator;
 
     @GetMapping("/signin")
-    String jumpToSignIn() {
+    public String registration(Model model) {
+        model.addAttribute("userForm", new User());
+
         return "signin";
+    }
+
+    @PostMapping("/signin")
+    public String registration(@ModelAttribute("userForm") User userForm, BindingResult bindingResult) {
+        userValidator.validate(userForm, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            return "signin";
+        }
+
+        userService.save(userForm);
+
+        securityService.autoLogin(userForm.getUsername(), userForm.getPasswordConfirm());
+
+        return "redirect:/welcome";
+    }
+
+    @GetMapping("/login")
+    public String login(Model model, String error, String logout) {
+        if (error != null)
+            model.addAttribute("error", "Your username and password is invalid.");
+
+        if (logout != null)
+            model.addAttribute("message", "You have been logged out successfully.");
+
+        return "login";
+    }
+
+    @GetMapping({"/", "/welcome"})
+    public String welcome(Model model) {
+        return "welcome";
     }
 }
