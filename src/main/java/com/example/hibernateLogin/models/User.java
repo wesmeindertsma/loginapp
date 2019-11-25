@@ -1,15 +1,23 @@
 package com.example.hibernateLogin.models;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
-@Table(name = "users", catalog = "hibernate")
+@Table(name = "user", catalog = "hibernate")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
     private String name;
     private String email;
     private String password;
+
+    @Transient
+    private String passwordConfirm;
+
+    @ManyToMany
+    private Set<Role> roles;
 
     public String getEmail() {
         return email;
@@ -33,5 +41,29 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }
